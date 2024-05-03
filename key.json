@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "tablerofinpy",
+  "private_key_id": "c1c62026cb782968b7e722f5e228ddb7ddefb4fa",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/R5bZbOiC8c2K\n342oZE3CqKe28g9hXx7MzAQfVCvmW9Y7LG0UFEbkjDqyAcuC0OMGWBPdH48kPGlo\nJwaH3xoaxAkuhFw/QcYFXO8e/aAgAaUcCq7fNgC5C+SFyOGRDGzgsc6DVtSpEIMd\nBCEcW4JuLgBx2F+s9YiwM3TUDTiK2ziK0aglthSsuCzEwdED19I3tNJkHINUwQHA\n12+1fK2XIesOupXAkbwRXId7Oqt11mrS7loZMdg5vPx6QSExLXtWEKOplvNPn7SN\ncIgggkyc6pcgd6XdhzwyTbjdJziLLBAdPYSvOxAiOvC/XlXIlNhbhJDBi1aHRJdZ\nI0/smG6ZAgMBAAECggEADEvY2a9Tnx9WPEg0vg98pDfdWDhlXrgTrcyrsyvhCpT6\nx6EKfhDzobuWBl1xLL6q6Xx+AmgF9qlfiU+A7vkbn37crD3cBEEBLtUTliVtxsD0\nUUIqjbTWBQ9LqIIKZh2rXiJwCSdq0ld6ZkIessj7MIQKiUcEl4TNPa6BIySabuqe\nH0eQ0wJC59/bGEa11iBfvqjC2T6e7QtuLOC7ZV0l1CA7LysBBKG6yN/7YDk3ph7A\nTvfq/hf6pquSKbZFTAkzaiKrYUQ3V8Eg9sPaoQ4+ZBrgxClumBW5VuulBtgV/sNv\nPhTF3NA7DQPM+k+3NsuLsx65aJ1FelQ+g2IIV1PFxQKBgQD7n30bsOqAAolt7wFX\nufUSyZglOSpwpKbu9pihlEQ0q9ePyJrHLwfKj+rxSAiLEyXNXaCS5E5h9Qx5VUcH\nV0HrFuM2XRWOJC8C6DyWF4m2Es9eE/dKcWGDwjymSjBs5sz215W3e1ZxIio5Ypro\nUm2AIeJpFrehYUscQurdEDsi3wKBgQDCm2InTzzZvttg8jON9VmMwCyBS6tFsIFr\njEV4/j+CYbdo3GIHWDFS38OacOVzIEANtPiWxtiZxqaeKthBNTf6QpM8kdyv2c4b\nE+0xHScLq/8Yx9NgQI9dIXBLHa6eBGnqFnDQNI5IhIpd6RY3p3K5Go6eE4sWswZ+\nc5UCbMtVhwKBgQCM97Ezjk4SIVm1CS2LZFb0i5R9ZiVsrhIH1od0HoiHqa4+k3iD\nFsoapb5OJrkCkVugTk/je5yeLJcscqY0aqI3fr8UednVpFfiHRG0VMOGCcu7PRxR\nzGuBUZSA5Rd0K2mw8N6jyKmJAEb/l0qJ1YQbQOCDV4LRGpzl3GeQKcO3qQKBgDGd\nti+5hxUpEPutpLFL3ZICKRap+TfiYYzPDaNkh0KxsTZeAexHcwPjIxbMM+PfVBVq\nj3q5pd3HBRIMcGhnribzNGDb+30mNeM3eGDuQtc5+ecSg3Tl4OdosB2mqq+FBo/1\nOrwKukAI8tIwrEZyPdCt0bDB4NNfv4cb5uDgZhMfAoGAI5kSdWkAp8p5jjkdUmvR\n2IWVy3Dek4SaWzPzTtB/H5I7IuSTya6v2GUDjw5xrKv6hb0kwiiV43orwtj66379\nZpiIvxIEImklBIEwsPQMvCs7n2HUGb00iFEODqCCL2xIXB0ScaKqYyzf5NzdKJzz\ncSmIs0BkoM2pMs7Jrx4LcrU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "tablerofinpyservice@tablerofinpy.iam.gserviceaccount.com",
+  "client_id": "113202272412072406578",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tablerofinpyservice%40tablerofinpy.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
