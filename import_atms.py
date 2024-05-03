@@ -1,9 +1,6 @@
 def connectDb():
     from sqlalchemy import create_engine
-    import configparser
-
-    print("Conectando DB ...")
-    motor = create_engine('mysql+mysqlconnector://matiasrodr:fisuMARswi966@localhost/tdf_automatic')
+    motor = create_engine('mysql+mysqlconnector://root:Nub3Cosmic4@localhost/tdf_automatic')
     return motor
 
 import pandas as pd
