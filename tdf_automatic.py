@@ -1,13 +1,37 @@
+import os
+import pandas as pd
+import os
+import gspread
+import datetime
+
+def unzipTDF(fileName):
+    import zipfile
+    
+    print("Descomprimiendo archivo ...")
+    with zipfile.ZipFile(fileName,"r") as zip_ref:
+        zip_ref.extractall()
+
+    # Specify the path of the file to be deleted
+    file_path = fileName
+    # Check if the file exists before attempting to delete it
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"The file {file_path} has been deleted.")
+    else:
+        print(f"The file {file_path} does not exist.")
+    filenNameXLS = fileName[0:fileName.index(".")]
+    filenNameXLS = filenNameXLS + ".xls"        
+    return filenNameXLS
+
 def getTDF():
     import imaplib
     import email
-    import os
 
     user = 'mrodriguezcheroky'
     password = 'ozyl qbah amca yvot'
     server = imaplib.IMAP4_SSL('imap.gmail.com')
     server.login(user, password)
-    server.select('inbox')
+    server.select('TDF')
 
     fileName = ''
     detach_dir = '.'
@@ -45,32 +69,61 @@ def getTDF():
     server.logout()
     return fileName
 
-def TDFtoDB(fileNameXLS, conexion):
-    import pandas as pd
-    print("Importando datos a la DB ...")
+def TDFtoGSheet(fileNameXLS, worksheet):
+
+    print("Importando datos a Google Sheets ...")
     datos_excel = pd.read_html(fileNameXLS)[0]
     datos_excel.columns = datos_excel.iloc[0]
     datos_excel = datos_excel.drop(0)
-    retorno = datos_excel.to_sql(name="tdf", con=conexion, if_exists="replace", index=False, index_label="ATM")
-    return retorno
 
-def unzipTDF(fileName):
-    import zipfile
-    print("Descomprimiendo archivo ...")
-    with zipfile.ZipFile(fileName,"r") as zip_ref:
-        zip_ref.extractall()
-    return fileName
+    file_path = fileNameXLS
+    # Check if the file exists before attempting to delete it
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"The file {file_path} has been deleted.")
+    else:
+        print(f"The file {file_path} does not exist.")
 
-def connectDb():
-    from sqlalchemy import create_engine
-    motor = create_engine('mysql+mysqlconnector://root:Nub3Cosmic4@localhost/tdf_automatic')
-    return motor
+    for i, col in enumerate(datos_excel.columns):
+        if i == 0 :
+            continue
+        else :
+            datos_excel[col] = datos_excel[col].map(int)
+    worksheet.clear()
+    worksheet.update([datos_excel.columns.values.tolist()] + datos_excel.values.tolist())
+    return datos_excel
 
+def getGSheet(googleSheetId):
+    from oauth2client.service_account import ServiceAccountCredentials
+
+    # Define the scope
+    scope = ['https://spreadsheets.google.com/feeds',
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/drive.file',
+            'https://www.googleapis.com/auth/drive']
+
+    # Define the credentials file path
+    creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
+
+    # Authorize the client
+    client = gspread.authorize(creds)
+
+    # Open the spreadsheet
+    gsheet = client.open_by_key(googleSheetId)
+    return gsheet
 
 fileName = getTDF()
-unzipTDF(fileName)
-filenNameXLS = fileName[0:fileName.index(".")]
-filenNameXLS = filenNameXLS + ".xls"
-conexion = connectDb()
-retorno = TDFtoDB(filenNameXLS, conexion)
-print("Cantidad de registros insertados: ",retorno)
+if fileName :
+    filenNameXLS = unzipTDF(fileName)
+    gs = getGSheet("16XHtpBjy0jSb8QfHwkRJy86-4h3wNv_YeiQygxYp-R4")
+    df = TDFtoGSheet(filenNameXLS, gs.worksheet("TDF"))
+
+    ws = gs.worksheet("SaldosATMs")
+    fechaHoraActual = datetime.datetime.now()
+    cadena_formato = "%d/%m/%Y %H:%M:%S"
+    fecha_hora_str = fechaHoraActual.strftime(cadena_formato)
+    ws.update_cell(1, 3, fecha_hora_str)
+
+    print("Registros insertados!!")
+else:
+    print("No hay TDF disponible")
