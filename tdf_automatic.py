@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import gspread
 import datetime
+import pytz
 
 def unzipTDF(fileName):
     import zipfile
@@ -119,7 +120,8 @@ if fileName :
     df = TDFtoGSheet(filenNameXLS, gs.worksheet("TDF"))
 
     ws = gs.worksheet("SaldosATMs")
-    fechaHoraActual = datetime.datetime.now()
+
+    fechaHoraActual = datetime.datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
     cadena_formato = "%d/%m/%Y %H:%M:%S"
     fecha_hora_str = fechaHoraActual.strftime(cadena_formato)
     ws.update_cell(1, 3, fecha_hora_str)
