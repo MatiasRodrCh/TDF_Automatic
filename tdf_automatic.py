@@ -125,6 +125,7 @@ if fileName :
     cadena_formato = "%d/%m/%Y %H:%M:%S"
     fecha_hora_str = fechaHoraActual.strftime(cadena_formato)
     ws.update_cell(1, 3, fecha_hora_str)
+    ws.update_cell(1, 5, fileName)
 
     logging.info("Registros insertados!!")
 else:
