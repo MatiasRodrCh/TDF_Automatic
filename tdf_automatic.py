@@ -4,22 +4,21 @@ import os
 import gspread
 import datetime
 import pytz
+import logging
 
 def unzipTDF(fileName):
     import zipfile
     
-    print("Descomprimiendo archivo ...")
+    logging.info("Descomprimiendo archivo %s...", fileName)
     with zipfile.ZipFile(fileName,"r") as zip_ref:
         zip_ref.extractall()
 
-    # Specify the path of the file to be deleted
-    file_path = fileName
     # Check if the file exists before attempting to delete it
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        print(f"The file {file_path} has been deleted.")
+    if os.path.exists(fileName):
+        os.remove(fileName)
+        logging.info(f"The file {fileName} has been deleted.")
     else:
-        print(f"The file {file_path} does not exist.")
+        logging.info(f"The file {fileName} does not exist.")
     filenNameXLS = fileName[0:fileName.index(".")]
     filenNameXLS = filenNameXLS + ".xls"        
     return filenNameXLS
@@ -39,7 +38,7 @@ def getTDF():
     #if 'attachments' not in os.listdir(detach_dir):
     #    os.mkdir('attachments')
 
-    print("Iniciando proceso de recupercion de mail ...")
+    logging.info("Iniciando proceso de recupercion de mail ...")
         
     typ, data = server.search(None, 'UNSEEN SUBJECT "TDF"')
     if data[0]:
@@ -48,7 +47,7 @@ def getTDF():
             emailBody = messageParts[0][1]
             raw_email_string = emailBody.decode('utf-8')
             mail = email.message_from_string(raw_email_string)#
-            print('emailbody complete ...')
+            logging.info('emailbody complete ...')
             for part in mail.walk():
                 if part.get_content_maintype() == 'multipart':
                     #print(part.as_string()) QUITAR?
@@ -57,22 +56,22 @@ def getTDF():
                     #print(part.as_string()) QUITAR?
                     continue
                 fileName = part.get_filename()
-                print('file names processed ...')
+                logging.info('file names processed ...')
                 if bool(fileName):
                     filePath = os.path.join(detach_dir, fileName)
                     if not os.path.isfile(filePath):
-                        print("Archivo adjunto: ", fileName) # QUITAR?
+                        logging.info("Archivo adjunto: %s", fileName) # QUITAR?
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
-                        print('fp closed ...')
+                        logging.info('fp closed ...')
     server.close()
     server.logout()
     return fileName
 
 def TDFtoGSheet(fileNameXLS, worksheet):
 
-    print("Importando datos a Google Sheets ...")
+    logging.info("Importando datos a Google Sheets ...")
     datos_excel = pd.read_html(fileNameXLS)[0]
     datos_excel.columns = datos_excel.iloc[0]
     datos_excel = datos_excel.drop(0)
@@ -81,9 +80,9 @@ def TDFtoGSheet(fileNameXLS, worksheet):
     # Check if the file exists before attempting to delete it
     if os.path.exists(file_path):
         os.remove(file_path)
-        print(f"The file {file_path} has been deleted.")
+        logging.info(f"The file {file_path} has been deleted.")
     else:
-        print(f"The file {file_path} does not exist.")
+        logging.info(f"The file {file_path} does not exist.")
 
     for i, col in enumerate(datos_excel.columns):
         if i == 0 :
@@ -102,16 +101,17 @@ def getGSheet(googleSheetId):
             'https://www.googleapis.com/auth/spreadsheets',
             'https://www.googleapis.com/auth/drive.file',
             'https://www.googleapis.com/auth/drive']
-
     # Define the credentials file path
     creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
-
     # Authorize the client
     client = gspread.authorize(creds)
-
     # Open the spreadsheet
     gsheet = client.open_by_key(googleSheetId)
     return gsheet
+
+
+################### MAIN #################
+logging.basicConfig(filename='tdf_automatic.log', filemode='a', level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 fileName = getTDF()
 if fileName :
@@ -126,6 +126,6 @@ if fileName :
     fecha_hora_str = fechaHoraActual.strftime(cadena_formato)
     ws.update_cell(1, 3, fecha_hora_str)
 
-    print("Registros insertados!!")
+    logging.info("Registros insertados!!")
 else:
-    print("No hay TDF disponible")
+    logging.info("No hay TDF disponible")
