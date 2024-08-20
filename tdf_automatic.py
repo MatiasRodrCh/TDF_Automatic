@@ -6,11 +6,12 @@ import datetime
 import pytz
 import logging
 
+
 def unzipTDF(fileName):
     import zipfile
-    
+
     logging.info("Descomprimiendo archivo %s...", fileName)
-    with zipfile.ZipFile(fileName,"r") as zip_ref:
+    with zipfile.ZipFile(fileName, "r") as zip_ref:
         zip_ref.extractall()
 
     # Check if the file exists before attempting to delete it
@@ -20,8 +21,9 @@ def unzipTDF(fileName):
     else:
         logging.info(f"The file {fileName} does not exist.")
     filenNameXLS = fileName[0:fileName.index(".")]
-    filenNameXLS = filenNameXLS + ".xls"        
+    filenNameXLS = filenNameXLS + ".xls"
     return filenNameXLS
+
 
 def getTDF():
     import imaplib
@@ -35,32 +37,33 @@ def getTDF():
 
     fileName = ''
     detach_dir = '.'
-    #if 'attachments' not in os.listdir(detach_dir):
+    # if 'attachments' not in os.listdir(detach_dir):
     #    os.mkdir('attachments')
 
     logging.info("Iniciando proceso de recupercion de mail ...")
-        
+
     typ, data = server.search(None, 'UNSEEN SUBJECT "TDF"')
     if data[0]:
         for msgId in data[0].split():
             typ, messageParts = server.fetch(msgId, '(RFC822)')
             emailBody = messageParts[0][1]
             raw_email_string = emailBody.decode('utf-8')
-            mail = email.message_from_string(raw_email_string)#
+            mail = email.message_from_string(raw_email_string)
             logging.info('emailbody complete ...')
             for part in mail.walk():
                 if part.get_content_maintype() == 'multipart':
-                    #print(part.as_string()) QUITAR?
+                    # print(part.as_string()) QUITAR?
                     continue
                 if part.get('Content-Disposition') is None:
-                    #print(part.as_string()) QUITAR?
+                    # print(part.as_string()) QUITAR?
                     continue
                 fileName = part.get_filename()
                 logging.info('file names processed ...')
                 if bool(fileName):
                     filePath = os.path.join(detach_dir, fileName)
                     if not os.path.isfile(filePath):
-                        logging.info("Archivo adjunto: %s", fileName) # QUITAR?
+                        logging.info("Archivo adjunto: %s",
+                                     fileName)  # QUITAR?
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
@@ -68,6 +71,7 @@ def getTDF():
     server.close()
     server.logout()
     return fileName
+
 
 def TDFtoGSheet(fileNameXLS, worksheet):
 
@@ -85,22 +89,24 @@ def TDFtoGSheet(fileNameXLS, worksheet):
         logging.info(f"The file {file_path} does not exist.")
 
     for i, col in enumerate(datos_excel.columns):
-        if i == 0 :
+        if i == 0:
             continue
-        else :
+        else:
             datos_excel[col] = datos_excel[col].map(int)
     worksheet.clear()
-    worksheet.update([datos_excel.columns.values.tolist()] + datos_excel.values.tolist())
+    worksheet.update([datos_excel.columns.values.tolist()] +
+                     datos_excel.values.tolist())
     return datos_excel
+
 
 def getGSheet(googleSheetId):
     from oauth2client.service_account import ServiceAccountCredentials
 
     # Define the scope
     scope = ['https://spreadsheets.google.com/feeds',
-            'https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/drive.file',
-            'https://www.googleapis.com/auth/drive']
+             'https://www.googleapis.com/auth/spreadsheets',
+             'https://www.googleapis.com/auth/drive.file',
+             'https://www.googleapis.com/auth/drive']
     # Define the credentials file path
     creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
     # Authorize the client
@@ -111,17 +117,19 @@ def getGSheet(googleSheetId):
 
 
 ################### MAIN #################
-logging.basicConfig(filename='tdf_automatic.log', filemode='a', level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='tdf_automatic.log', filemode='a', level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 fileName = getTDF()
-if fileName :
+if fileName:
     filenNameXLS = unzipTDF(fileName)
     gs = getGSheet("16XHtpBjy0jSb8QfHwkRJy86-4h3wNv_YeiQygxYp-R4")
     df = TDFtoGSheet(filenNameXLS, gs.worksheet("TDF"))
 
     ws = gs.worksheet("SaldosATMs")
 
-    fechaHoraActual = datetime.datetime.now(pytz.timezone('America/Argentina/Buenos_Aires'))
+    fechaHoraActual = datetime.datetime.now(
+        pytz.timezone('America/Argentina/Buenos_Aires'))
     cadena_formato = "%d/%m/%Y %H:%M:%S"
     fecha_hora_str = fechaHoraActual.strftime(cadena_formato)
     ws.update_cell(1, 3, fecha_hora_str)
