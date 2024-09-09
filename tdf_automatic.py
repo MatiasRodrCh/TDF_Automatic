@@ -1,14 +1,16 @@
 import os
 import pandas as pd
-import os
 import gspread
 import datetime
 import pytz
 import logging
-
+from oauth2client.service_account import ServiceAccountCredentials
+import zipfile
+import imaplib
+import email
+import configparser
 
 def unzipTDF(fileName):
-    import zipfile
 
     logging.info("Descomprimiendo archivo %s...", fileName)
     with zipfile.ZipFile(fileName, "r") as zip_ref:
@@ -25,14 +27,22 @@ def unzipTDF(fileName):
     return filenNameXLS
 
 
-def getTDF():
-    import imaplib
-    import email
+def getCredentials():
+    config_obj = configparser.ConfigParser()
+    #Read config.ini file
+    config_obj.read("gmailCredentials.ini")
+    credParam = config_obj["gmail"]
+    user = credParam["user"]
+    password = credParam["password"]
+    credentials = (user, password)
+    return credentials
 
-    user = 'mrodriguezcheroky'
-    password = 'ozyl qbah amca yvot'
+def getTDF():
+
+    #user = 'mrodriguezcheroky'
+    #password = 'ozyl qbah amca yvot'
     server = imaplib.IMAP4_SSL('imap.gmail.com')
-    server.login(user, password)
+    server.login(*getCredentials())
     server.select('TDF')
 
     fileName = ''
@@ -100,8 +110,6 @@ def TDFtoGSheet(fileNameXLS, worksheet):
 
 
 def getGSheet(googleSheetId):
-    from oauth2client.service_account import ServiceAccountCredentials
-
     # Define the scope
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/spreadsheets',
