@@ -1,14 +1,14 @@
 import os
-import pandas as pd
-import gspread
 import datetime
-import pytz
 import logging
-from oauth2client.service_account import ServiceAccountCredentials
 import zipfile
 import imaplib
 import email
 import configparser
+import pandas as pd
+import gspread
+import pytz
+from oauth2client.service_account import ServiceAccountCredentials
 
 def unzipTDF(fileName):
 
@@ -39,8 +39,6 @@ def getCredentials():
 
 def getTDF():
 
-    #user = 'mrodriguezcheroky'
-    #password = 'ozyl qbah amca yvot'
     server = imaplib.IMAP4_SSL('imap.gmail.com')
     server.login(*getCredentials())
     server.select('TDF')
